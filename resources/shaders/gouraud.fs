@@ -58,6 +58,8 @@ vec3 sinking_color(vec3 color)
 
 uniform bool compute_triangle_normals_in_fs;
 
+varying mat3 normal_matrix;
+
 void main()
 {
     if (any(lessThan(clipping_planes_dots, ZERO)))
@@ -72,7 +74,11 @@ void main()
         vec3 triangle_normal = normalize(cross(dFdx(model_pos.xyz), dFdy(model_pos.xyz)));
 
         // First transform the normal into camera space and normalize the result.
-        eye_normal_fs = normalize(gl_NormalMatrix * triangle_normal);
+        eye_normal_fs = normalize(normal_matrix * triangle_normal);
+
+        if (triangle_normal == vec3(0.0, 0.0, 0.0)) {
+            color = vec3(1.0, 0.0, 1.0);
+        }
 
         // Compute the cos of the angle between the normal and lights direction. The light is directional so the direction is constant for every vertex.
         // Since these two are normalized the cosine is the dot product. We also need to clamp the result to the [0,1] range.

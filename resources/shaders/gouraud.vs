@@ -56,6 +56,8 @@ varying vec3 eye_normal;
 
 uniform bool compute_triangle_normals_in_fs;
 
+varying mat3 normal_matrix;
+
 void main()
 {
     if (!compute_triangle_normals_in_fs) {
@@ -74,6 +76,8 @@ void main()
         NdotL = max(dot(eye_normal, LIGHT_FRONT_DIR), 0.0);
         intensity.x += NdotL * LIGHT_FRONT_DIFFUSE;
     }
+
+    normal_matrix = gl_NormalMatrix;
 
     model_pos = gl_Vertex;
     // Point in homogenous coordinates.
