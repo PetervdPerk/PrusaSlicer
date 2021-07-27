@@ -1,4 +1,5 @@
 #version 110
+#extension GL_OES_standard_derivatives : enable
 
 #define INTENSITY_CORRECTION 0.6
 
@@ -74,7 +75,7 @@ void main()
     float world_normal_z_fs = world_normal_z;
     if (compute_triangle_normals_in_fs) {
         vec3 triangle_normal = normalize(cross(dFdx(model_pos.xyz), dFdy(model_pos.xyz)));
-        triangle_normal = -triangle_normal;
+        //triangle_normal = -triangle_normal;
 
         // First transform the normal into camera space and normalize the result.
         eye_normal_fs = normalize(normal_matrix * triangle_normal);
