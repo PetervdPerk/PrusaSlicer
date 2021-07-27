@@ -47,6 +47,8 @@ varying vec3 delta_box_min;
 varying vec3 delta_box_max;
 
 varying vec4 model_pos;
+//varying vec4 model_pos_transformed_4;
+//varying vec3 model_pos_transformed_3;
 varying float world_pos_z;
 varying float world_normal_z;
 varying vec3 eye_normal;
@@ -72,6 +74,8 @@ void main()
     float world_normal_z_fs = world_normal_z;
     if (compute_triangle_normals_in_fs) {
         vec3 triangle_normal = normalize(cross(dFdx(model_pos.xyz), dFdy(model_pos.xyz)));
+        if (!gl_FrontFacing)
+            triangle_normal = -triangle_normal;
 
         // First transform the normal into camera space and normalize the result.
         eye_normal_fs = normalize(normal_matrix * triangle_normal);

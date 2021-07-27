@@ -50,6 +50,8 @@ varying vec3 delta_box_max;
 varying vec3 clipping_planes_dots;
 
 varying vec4 model_pos;
+//varying vec4 model_pos_transformed_4;
+//varying vec3 model_pos_transformed_3;
 varying float world_pos_z;
 varying float world_normal_z;
 varying vec3 eye_normal;
@@ -80,6 +82,9 @@ void main()
     normal_matrix = gl_NormalMatrix;
 
     model_pos = gl_Vertex;
+//    model_pos_transformed_4 = gl_ModelViewMatrix * vec4(gl_Vertex.xyz, 1.0);
+//    model_pos_transformed_3 = vec3(model_pos_transformed_4) / model_pos_transformed_4.w;
+
     // Point in homogenous coordinates.
     vec4 world_pos = print_box.volume_world_matrix * gl_Vertex;
     world_pos_z = world_pos.z;
