@@ -285,6 +285,8 @@ public:
     void                    clear_volumes();
     void                    sort_volumes(bool full_sort);
     bool                    is_multiparts() const { return volumes.size() > 1; }
+    // Checks if any of object volume is painted using the multi-material painting gizmo.
+    bool                    is_mm_painted() const;
 
     ModelInstance*          add_instance();
     ModelInstance*          add_instance(const ModelInstance &instance);
