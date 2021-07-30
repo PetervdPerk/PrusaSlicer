@@ -1,4 +1,5 @@
 #include "libslic3r/libslic3r.h"
+#include "libslic3r/Platform.hpp"
 #include "GLShadersManager.hpp"
 #include "3DScene.hpp"
 #include "GUI_App.hpp"
@@ -43,9 +44,16 @@ std::pair<bool, std::string> GLShadersManager::init()
     // used to render extrusion and travel paths as lines in gcode preview
     valid &= append_shader("toolpaths_lines", { "toolpaths_lines.vs", "toolpaths_lines.fs" });
     // used to render objects in 3d editor
-    valid &= append_shader("gouraud", { "gouraud.vs", "gouraud.fs" }
+    if (platform_flavor() == PlatformFlavor::OSXOnArm64)
+        valid &= append_shader("gouraud", { "gouraud.vs", "gouraud.fs" }, { "FLIP_TRIANGLE_NORMALS"sv
 #if ENABLE_ENVIRONMENT_MAP
-        , { "ENABLE_ENVIRONMENT_MAP"sv }
+            , "ENABLE_ENVIRONMENT_MAP"sv
+#endif
+        });
+    else
+        valid &= append_shader("gouraud", { "gouraud.vs", "gouraud.fs" }
+#if ENABLE_ENVIRONMENT_MAP
+            , { "ENABLE_ENVIRONMENT_MAP"sv }
 #endif
         );
     // used to render variable layers heights in 3d editor

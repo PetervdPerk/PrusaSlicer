@@ -28,6 +28,12 @@ enum class PlatformFlavor
 	WSL2,
 	// For Platform::BSDUnix
 	OpenBSD,
+	// For Platform::OSX
+	GenericOSX,
+	// For Apple's based on Intel CPU
+	OSXOnX86_64,
+	// For Apple's based on Arm CPU
+	OSXOnArm64,
 };
 
 // To be called on program start-up.

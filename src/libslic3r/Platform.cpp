@@ -3,6 +3,12 @@
 #include <boost/log/trivial.hpp>
 #include <boost/filesystem/operations.hpp>
 
+#if defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/machine.h>
+#endif
+
 namespace Slic3r {
 
 static auto s_platform 		  = Platform::Uninitialized;
@@ -17,7 +23,29 @@ void detect_platform()
 #elif defined(__APPLE__)
     BOOST_LOG_TRIVIAL(info) << "Platform: OSX";
 	s_platform 		  = Platform::OSX;
-	s_platform_flavor = PlatformFlavor::Generic;
+	s_platform_flavor = PlatformFlavor::GenericOSX;
+    {
+        cpu_type_t type;
+        size_t     size = sizeof(type);
+        if (sysctlbyname("hw.cputype", &type, &size, NULL, 0) == 0) {
+            if (type == CPU_TYPE_X86_64) {
+                int proc_translated = 0;
+                size                = sizeof(proc_translated);
+                if (sysctlbyname("sysctl.proc_translated", &proc_translated, &size, NULL, 0) == 0) {
+                    if (proc_translated == 1) {
+                        s_platform_flavor = PlatformFlavor::OSXOnArm64;
+                        BOOST_LOG_TRIVIAL(info) << "Platform flavor: arm64";
+                    } else {
+                        s_platform_flavor = PlatformFlavor::OSXOnX86_64;
+                        BOOST_LOG_TRIVIAL(info) << "Platform flavor: x86_64";
+                    }
+                }
+            } else if (type == CPU_TYPE_ARM64) {
+                s_platform_flavor = PlatformFlavor::OSXOnArm64;
+                BOOST_LOG_TRIVIAL(info) << "Platform flavor: arm64";
+            }
+        }
+    }
 #elif defined(__linux__)
     BOOST_LOG_TRIVIAL(info) << "Platform: Linux";
 	s_platform 		  = Platform::Linux;
